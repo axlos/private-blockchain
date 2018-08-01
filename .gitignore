@@ -1,0 +1,3 @@
+# Ignore chaindata data.
+chaindata/*
+node_modules/*
