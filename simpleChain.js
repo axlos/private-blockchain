@@ -116,6 +116,7 @@ class Blockchain {
       this.getBlock(blockHeight).then(block => {
         // get block hash
         let blockHash = block.hash;
+        console.log('Validing block: ', blockHash);
         // remove block hash to test block integrity
         block.hash = '';
         // generate block hash
@@ -148,7 +149,7 @@ class Blockchain {
       let errorLog = [];
       let valided = []
       this.getBlockHeight().then(chainHeight => {
-        for (var i = 0; i < chainHeight; i++) {
+        for (var i = 0; i < chainHeight + 1; i++) {
           this.validateBlock(i).then(result => {
             // validate block
             if (!result.valid) {
@@ -171,7 +172,7 @@ class Blockchain {
             })
           });
         }
-      })
+      });
     });
 
     p.then(errorLog => {
@@ -181,28 +182,26 @@ class Blockchain {
       } else {
         console.log('No errors detected');
       }
-    })
+    });
   }
 
   iterateChain(remove) {
-    db.createReadStream()
-      .on('data', (data) => {
-        if (remove) {
-          db.del(data.key)
-          console.log('Removing: ', data.key)
-        } else {
-          console.log(data.key, '=', data.value)
-        }
-      })
-      .on('error', function (err) {
-        console.log('Oh my!', err);
-      })
-      .on('close', function () {
-        console.log('Stream closed')
-      })
-      .on('end', function () {
-        console.log('Stream ended')
-      })
+    return new Promise((resolve, reject) => {
+      db.createReadStream()
+        .on('data', (data) => {
+          if (remove) {
+            db.del(data.key);
+          } else {
+            console.log(data.key, '=', data.value);
+          }
+        })
+        .on('error', function (err) {
+          reject();
+        })
+        .on('end', function () {
+          resolve();
+        })
+    });
   }
 
 }
