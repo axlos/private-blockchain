@@ -9,11 +9,11 @@ blockchain.addBlock(new simpleChain.Block("test data 1" )).then(_ => {
   }).catch(err => {
     console.error(err);
   })
-})
 
-// Get Height
-blockchain.getBlockHeight().then(height => {
-  console.log('Height: ', height)
+  // Get Height
+  blockchain.getBlockHeight().then(height => {
+    console.log('Height: ', height)
+  })
 })
 
 // Add another 10 blocks
