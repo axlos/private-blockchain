@@ -156,20 +156,22 @@ class Blockchain {
               errorLog.push(result.height);
             }
             // compare blocks hash link
-            let currentBlock = this.getBlock(result.height);
-            let previousBlock = this.getBlock(result.height + 1);
-            Promise.all([currentBlock, previousBlock]).then(blocks => {
-              let blockHash = blocks[0].hash;
-              let previousHash = blocks[1].previousBlockHash;
-              if (blockHash !== previousHash) {
-                errorLog.push(result.height);
-              }
-              valided.push(result.height)
-              // Check when we have valided all blocks
-              if (valided.length >= chainHeight) {
-                resolve(errorLog);
-              }
-            })
+            if (result.height < chainHeight) {
+              let currentBlock = this.getBlock(result.height);
+              let previousBlock = this.getBlock(result.height + 1);
+              Promise.all([currentBlock, previousBlock]).then(blocks => {
+                let blockHash = blocks[0].hash;
+                let previousHash = blocks[1].previousBlockHash;
+                if (blockHash !== previousHash) {
+                  errorLog.push(result.height);
+                }
+                valided.push(result.height)
+                // Check when we have valided all blocks
+                if (valided.length >= chainHeight) {
+                  resolve(errorLog);
+                }
+              })
+            }
           });
         }
       });
